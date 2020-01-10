@@ -1,0 +1,42 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+# SSH user, this user should allow ssh based auth without requiring a password
+ansible_ssh_user=root
+
+openshift_disable_check=memory_availability,disk_availability,docker_storage,docker_storage_driver,docker_image_availability,package_version,package_availability,package_update
+openshift_master_cluster_hostname=master.openshift.example.com
+openshift_master_cluster_public_hostname=master.openshift.example.com
+openshift_master_default_subdomain=apps.openshift.example.com
+
+
+ansible_service_broker_remove=True
+ansible_service_broker_install=False
+
+openshift_certificate_expiry_fail_on_warn=False
+
+# If ansible_ssh_user is not root, ansible_become must be set to true
+#ansible_become=true
+
+openshift_deployment_type=openshift-enterprise
+
+# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+
+# host group for masters
+[masters]
+master.openshift.example.com
+
+# host group for etcd
+[etcd]
+master.openshift.example.com
+
+# host group for nodes, includes region info
+[nodes]
+master.openshift.example.com
+node.openshift.example.com openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+node2.openshift.example.com 
